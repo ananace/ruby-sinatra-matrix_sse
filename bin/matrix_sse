@@ -26,7 +26,7 @@ get '/_matrix/client/r0/sync/sse', provides: 'text/event-stream' do
   params = request.params
   last_event_id = request.get_header('HTTP_LAST_EVENT_ID')
   access_token = request.get_header('HTTP_AUTHORIZATION').gsub('Bearer ', '')
-  heartbeat = params.fetch('heartbeat_interval', '5').to_i
+  heartbeat = params.fetch('heartbeat_interval', sse_server.default_heartbeat).to_i
   filter = params['filter']
   set_presence = params['set_presence']
   full_state = params['full_state']
