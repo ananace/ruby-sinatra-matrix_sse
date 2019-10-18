@@ -4,8 +4,8 @@ require 'concurrent'
 
 module MatrixSse
   class Connection
-    attr_accessor :api, :filter, :heartbeat_interval, :last_heartbeat, :logger,
-                  :name, :set_presence, :since
+    attr_accessor :api, :filter, :full_state, :heartbeat_interval,
+                  :last_heartbeat, :logger, :name, :set_presence, :since
     attr_reader :access_token, :stream
 
     def initialize(stream:, access_token:, **params)
@@ -17,6 +17,7 @@ module MatrixSse
       @filter = params[:filter]
       @name = params[:name] || object_id.to_s(16)
       @set_presence = params[:set_presence]
+      @full_state = params[:full_state]
 
       @logger = params[:logger]
       @last_send = Time.now
@@ -52,6 +53,7 @@ module MatrixSse
         params = {
           since: since,
           filter: filter,
+          full_state: full_state,
           set_presence: set_presence
         }.compact
 

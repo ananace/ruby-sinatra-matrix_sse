@@ -28,6 +28,8 @@ get '/_matrix/client/r0/sync/sse', provides: 'text/event-stream' do
   access_token = request.get_header('HTTP_AUTHORIZATION').gsub('Bearer ', '')
   heartbeat = params.fetch(:heartbeat_interval, '5').to_i
   filter = params[:filter]
+  set_presence = params[:set_presence]
+  full_state = params[:full_state]
 
   stream :keep_open do |out|
     conn = MatrixSse::Connection.new(
@@ -36,7 +38,9 @@ get '/_matrix/client/r0/sync/sse', provides: 'text/event-stream' do
 
       heartbeat_interval: heartbeat,
       since: last_event_id,
-      filter: filter
+      filter: filter,
+      set_presence: set_presence,
+      full_state: full_state
     )
 
     sse_server.add_connection conn
