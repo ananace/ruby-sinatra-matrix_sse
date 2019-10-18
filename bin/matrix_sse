@@ -10,6 +10,8 @@ config = JSON.parse(File.read('config.json'))
 sse_server = MatrixSse::Server.new config['homeserver']
 sse_server.start_background_worker
 
+sse_server.default_heartbeat = config['default_heartbeat'] if config.key? 'default_heartbeat'
+
 set server: 'thin', connections: []
 
 get '/' do

@@ -12,7 +12,7 @@ module MatrixSse
       @stream = stream
       @access_token = access_token
 
-      @heartbeat_interval = params[:heartbeat_interval] || 5
+      @heartbeat_interval = params[:heartbeat_interval]
       @since = params[:since]
       @filter = params[:filter]
       @name = params[:name] || object_id.to_s(16)
@@ -23,7 +23,7 @@ module MatrixSse
     end
 
     def heartbeat_required?
-      (Time.now - @last_send) > heartbeat_interval
+      (Time.now - @last_send) > (heartbeat_interval || 5)
     end
 
     def send_comment(comment = nil)

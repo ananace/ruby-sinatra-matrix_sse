@@ -1,3 +1,4 @@
 {
-    "homeserver": "https://matrix.org"
+    "homeserver": "https://matrix.org",
+    "default_heartbeat": 5
 }

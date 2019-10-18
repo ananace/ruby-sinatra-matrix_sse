@@ -4,11 +4,12 @@ require 'matrix_sdk'
 
 module MatrixSse
   class Server
-    attr_accessor :logger
+    attr_accessor :logger, :default_heartbeat
 
     def initialize(hs_url, logger: nil)
       @main_api = MatrixSdk::Api.new hs_url
       @connections = []
+      @default_heartbeat = 5
       @logger = logger
     end
 
@@ -17,6 +18,7 @@ module MatrixSse
         @main_api.homeserver,
         access_token: conn.access_token
       )
+      conn.heartbeat_interval ||= default_heartbeat
       conn.logger = logger
 
       logger.info "Server: Adding connection #{conn.name}"
