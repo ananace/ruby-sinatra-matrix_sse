@@ -1,39 +1,27 @@
-# MatrixSse
+Matrix SSE
+==========
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/matrix_sse`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A small testbed server for trying out [MSC2108][1] for the [Matrix protocol][2]
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'matrix_sse'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install matrix_sse
+Check out this repo, install the bundle, instantiate the config, and run `matrix_sse` to launch the server.
 
 ## Usage
 
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+When the server is running, any requests to `/_matrix/client/r0/sync/sse` will
+launch an SSE stream, taking the same parameters as the upstream
+[sync request][3]. Except for `interval` and `since` as mentioned in the
+[MSC][1].
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/matrix_sse.
+Bug reports and pull requests are welcome on GitHub at https://github.com/ananace/matrix_sse
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+[1]: https://github.com/matrix-org/matrix-doc/pull/2108
+[2]: https://matrix.org
+[3]: https://matrix.org/docs/spec/client_server/latest#get-matrix-client-r0-sync
