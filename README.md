@@ -6,6 +6,7 @@ A small testbed server for trying out [MSC2108][1] for the [Matrix protocol][2]
 ## Installation
 
 Check out this repo, install the bundle, instantiate the config, and run `matrix_sse` to launch the server.
+Also available on [DockerHub][4] as `ananace/matrix_sse`.
 
 An example configuration is provided as;
 ```json
@@ -33,3 +34,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 [1]: https://github.com/matrix-org/matrix-doc/pull/2108
 [2]: https://matrix.org
 [3]: https://matrix.org/docs/spec/client_server/latest#get-matrix-client-r0-sync
+[4]: https://hub.docker.com/r/ananace/matrix_sse
