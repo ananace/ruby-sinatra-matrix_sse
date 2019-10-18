@@ -35,6 +35,9 @@ get '/_matrix/client/r0/sync/sse', provides: 'text/event-stream' do
   set_presence = params['set_presence']
   full_state = params['full_state']
 
+  # Not part of the MSC, just for internal experimentation
+  sse2 = params.key? 'split_sections'
+
   stream :keep_open do |out|
     conn = MatrixSse::Connection.new(
       stream: out,
@@ -44,7 +47,9 @@ get '/_matrix/client/r0/sync/sse', provides: 'text/event-stream' do
       since: last_event_id,
       filter: filter,
       set_presence: set_presence,
-      full_state: full_state
+      full_state: full_state,
+
+      sse2: sse2
     )
 
     sse_server.add_connection conn

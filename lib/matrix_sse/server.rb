@@ -56,7 +56,7 @@ module MatrixSse
           if query.rejected?
             err = query.reason
 
-            conn.send_error err
+            conn.send_event name: :sync_error, data: err
           else
             data = query.value
 
@@ -64,7 +64,7 @@ module MatrixSse
             data.delete :next_batch
             conn.since = id
 
-            conn.send_data data.to_json, id: id
+            conn.send_data data, id: id
           end
 
           conn.reset_query

@@ -5,7 +5,7 @@ require 'concurrent'
 module MatrixSse
   class Connection
     attr_accessor :api, :filter, :full_state, :heartbeat_interval,
-                  :last_heartbeat, :logger, :name, :set_presence, :since
+                  :last_heartbeat, :logger, :name, :set_presence, :since, :sse2
     attr_reader :access_token, :stream
 
     def initialize(stream:, access_token:, **params)
@@ -18,6 +18,7 @@ module MatrixSse
       @name = params[:name] || object_id.to_s(16)
       @set_presence = params[:set_presence]
       @full_state = params[:full_state]
+      @sse2 = params[:sse2]
 
       @logger = params[:logger]
       @last_send = Time.now
@@ -33,16 +34,21 @@ module MatrixSse
       @last_send = Time.now
     end
 
-    def send_error(err)
-      logger.info "Conn|#{name}: Sending error #{err}"
-      stream << "event: sync_error\n"
-      stream << "data: #{err}\n\n"
-      @last_send = Time.now
+    def send_data(data, id: nil)
+      if sse2
+        data.keys.each do |key|
+          data[key].each do |value|
+            send_event(name: key, data: value.to_json, id: id)
+          end
+        end
+      else
+        send_event(name: :sync, data: data, id: id)
+      end
     end
 
-    def send_data(data, id: nil)
-      logger.info "Conn|#{name}: Sending #{data.size}B of data"
-      stream << "event: sync\n"
+    def send_event(name:, data:, id: nil)
+      logger.info "Conn|#{self.name}: Sending event '#{name}' with #{data.size}B of data"
+      stream << "event: #{name}\n"
       stream << "id: #{id}\n" if id
       stream << "data: #{data}\n\n"
       @last_send = Time.now
