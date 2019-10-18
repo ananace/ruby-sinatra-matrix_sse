@@ -41,5 +41,3 @@ get '/_matrix/client/r0/sync/sse', provides: 'text/event-stream' do
     out.callback { sse_server.remove_connection(conn) }
   end
 end
-
-# settings.connections.each { |out| out << "data: #{params[:msg]}\n\n" }
