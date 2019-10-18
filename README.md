@@ -7,6 +7,14 @@ A small testbed server for trying out [MSC2108][1] for the [Matrix protocol][2]
 
 Check out this repo, install the bundle, instantiate the config, and run `matrix_sse` to launch the server.
 
+An example configuration is provided as;
+```json
+{
+    "homeserver": "https://matrix.org",
+    "default_heartbeat": 5
+}
+```
+
 ## Usage
 
 When the server is running, any requests to `/_matrix/client/r0/sync/sse` will
