@@ -1,0 +1,46 @@
+#!/bin/env ruby
+# frozen_string_literal: true
+
+require 'json'
+require 'matrix_sse'
+require 'sinatra'
+
+config = JSON.parse(File.read('config.json'))
+
+sse_server = MatrixSse::Server.new config['homeserver']
+sse_server.start_background_worker
+
+set server: 'thin', connections: []
+
+get '/' do
+  sse_server.logger ||= logger
+end
+
+get '/_matrix/client/r0/sync/sse', provides: 'text/event-stream' do
+  sse_server.logger ||= logger
+
+  logger.info "Received SSE request, params: #{params}, headers:"
+  request.each_header { |k, v| logger.info "  #{k}: #{v}" }
+
+  params = request.params
+  last_event_id = request.get_header('HTTP_LAST_EVENT_ID')
+  access_token = request.get_header('HTTP_AUTHORIZATION').gsub('Bearer ', '')
+  heartbeat = params.fetch(:heartbeat_interval, '5').to_i
+  filter = params[:filter]
+
+  stream :keep_open do |out|
+    conn = MatrixSse::Connection.new(
+      stream: out,
+      access_token: access_token,
+
+      heartbeat_interval: heartbeat,
+      since: last_event_id,
+      filter: filter
+    )
+
+    sse_server.add_connection conn
+    out.callback { sse_server.remove_connection(conn) }
+  end
+end
+
+# settings.connections.each { |out| out << "data: #{params[:msg]}\n\n" }
