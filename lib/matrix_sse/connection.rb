@@ -35,7 +35,7 @@ module MatrixSse
     end
 
     def send_data(data, id: nil)
-      if sse2
+      if sse2 # Not part of the MSC, just for personal experimentation
         data.keys.each do |key|
           events = data[key][:events]
           if events
