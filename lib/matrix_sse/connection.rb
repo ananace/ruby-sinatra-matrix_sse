@@ -5,7 +5,7 @@ require 'concurrent'
 module MatrixSse
   class Connection
     attr_accessor :api, :filter, :full_state, :heartbeat_interval,
-                  :last_heartbeat, :logger, :name, :set_presence, :since, :sse2
+                  :last_heartbeat, :logger, :name, :set_presence, :since
     attr_reader :access_token, :stream
 
     def initialize(stream:, access_token:, **params)
@@ -18,7 +18,6 @@ module MatrixSse
       @name = params[:name] || object_id.to_s(16)
       @set_presence = params[:set_presence]
       @full_state = params[:full_state]
-      @sse2 = params[:sse2]
 
       @logger = params[:logger]
       @last_send = Time.now
@@ -35,28 +34,7 @@ module MatrixSse
     end
 
     def send_data(data, id: nil)
-      if sse2 # Not part of the MSC, just for personal experimentation
-        data.keys.each do |key|
-          events = data[key][:events]
-          if events
-            events.each do |value|
-              send_event(name: key, data: value.to_json, id: id)
-            end
-          else # Probably need to rethink this part
-            data[key][:join].each do |value|
-              send_event(name: :room_join, data: value.to_json, id: id)
-            end
-            data[key][:invite].each do |value|
-              send_event(name: :room_invite, data: value.to_json, id: id)
-            end
-            data[key][:leave].each do |value|
-              send_event(name: :room_leave, data: value.to_json, id: id)
-            end
-          end
-        end
-      else
-        send_event(name: :sync, data: data.to_json, id: id)
-      end
+      send_event(name: :sync, data: data.to_json, id: id)
     end
 
     def send_event(name:, data:, id: nil)
