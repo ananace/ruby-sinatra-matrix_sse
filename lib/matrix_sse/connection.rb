@@ -37,8 +37,21 @@ module MatrixSse
     def send_data(data, id: nil)
       if sse2
         data.keys.each do |key|
-          data[key].each do |value|
-            send_event(name: key, data: value.to_json, id: id)
+          events = data[key][:events]
+          if events
+            events.each do |value|
+              send_event(name: key, data: value.to_json, id: id)
+            end
+          else # Probably need to rethink this part
+            data[key][:join].each do |value|
+              send_event(name: :room_join, data: value.to_json, id: id)
+            end
+            data[key][:invite].each do |value|
+              send_event(name: :room_invite, data: value.to_json, id: id)
+            end
+            data[key][:leave].each do |value|
+              send_event(name: :room_leave, data: value.to_json, id: id)
+            end
           end
         end
       else
