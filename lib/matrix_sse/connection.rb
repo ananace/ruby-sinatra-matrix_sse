@@ -55,7 +55,7 @@ module MatrixSse
           end
         end
       else
-        send_event(name: :sync, data: data, id: id)
+        send_event(name: :sync, data: data.to_json, id: id)
       end
     end
 
