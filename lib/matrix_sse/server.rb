@@ -47,6 +47,10 @@ module MatrixSse
       loop do
         return unless @background_running
 
+        # TODO: batch and run with multiple threads?
+        # Or perhaps use a worker- and an output thread
+        #
+        # Also needs a rethink to avoid adding upwards of 500ms of delay
         @connections.each do |conn|
           conn.send_comment('heartbeat') if conn.heartbeat_required?
 
