@@ -13,6 +13,8 @@ module MatrixSse
       @access_token = access_token
       @event = event
 
+      @write_lock = Mutex.new
+
       @heartbeat_interval = params[:heartbeat_interval]
       @since = params[:since]
       @filter = params[:filter]
@@ -29,9 +31,12 @@ module MatrixSse
     end
 
     def send_comment(comment = nil)
+      @write_lock.lock
       logger.info "Conn|#{name}: Sending comment \"#{comment}\""
       stream << ": #{comment}\n\n"
       @last_send = Time.now
+    ensure
+      @write_lock.unlock
     end
 
     def send_data(data, id: nil)
@@ -39,11 +44,14 @@ module MatrixSse
     end
 
     def send_event(name:, data:, id: nil)
+      @write_lock.lock
       logger.info "Conn|#{self.name}: Sending event '#{name}' with #{data.size}B of data"
       stream << "event: #{name}\n"
       stream << "id: #{id}\n" if id
       stream << "data: #{data}\n\n"
       @last_send = Time.now
+    ensure
+      @write_lock.unlock
     end
 
     def query
