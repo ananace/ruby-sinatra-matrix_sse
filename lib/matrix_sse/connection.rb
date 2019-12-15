@@ -8,9 +8,10 @@ module MatrixSse
                   :last_heartbeat, :logger, :name, :set_presence, :since
     attr_reader :access_token, :stream
 
-    def initialize(stream:, access_token:, **params)
+    def initialize(stream:, access_token:, event:, **params)
       @stream = stream
       @access_token = access_token
+      @event = event
 
       @heartbeat_interval = params[:heartbeat_interval]
       @since = params[:since]
@@ -47,16 +48,20 @@ module MatrixSse
 
     def query
       @query ||= Concurrent::Future.execute do
-        params = {
-          since: since,
-          filter: filter,
-          full_state: full_state,
-          set_presence: set_presence
-        }.compact
+        begin
+          params = {
+            since: since,
+            filter: filter,
+            full_state: full_state,
+            set_presence: set_presence
+          }.compact
 
-        logger.info "Conn|#{name}: Starting query with params #{params.to_json}"
+          logger.info "Conn|#{name}: Starting query with params #{params.to_json}"
 
-        api.sync(**params)
+          api.sync(**params)
+        ensure
+          @event.set
+        end
       end
     end
 
