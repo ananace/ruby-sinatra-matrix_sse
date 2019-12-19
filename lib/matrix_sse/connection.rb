@@ -48,7 +48,7 @@ module MatrixSse
       logger.info "Conn|#{self.name}: Sending event '#{name}' with #{data.size}B of data"
       stream << "event: #{name}\n"
       stream << "id: #{id}\n" if id
-      stream << "data: #{data}\n\n"
+      stream << "data: #{data.split("\n").join("\ndata: ")}\n\n"
       @last_send = Time.now
     ensure
       @write_lock.unlock
