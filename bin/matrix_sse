@@ -18,13 +18,24 @@ get '/' do
   sse_server.logger ||= logger
 end
 
+options '/_matrix/client/r0/sync/sse', provides: :json do
+  sse_server.logger ||= logger
+
+  {}.to_json
+end
+
 get '/_matrix/client/r0/sync/sse', provides: 'text/event-stream' do
+  pass unless request.accept? 'text/event-stream'
   sse_server.logger ||= logger
 
   logger.info "Received SSE request, params: #{params}"
 
   unless request.has_header? 'HTTP_AUTHORIZATION'
-    halt 401, "No authorization header\n"
+    content_type :json
+    halt 401, {
+      errcode: 'M_MISSING_TOKEN',
+      error: 'Missing authorization header'
+    }.to_json
   end
 
   params = request.params
