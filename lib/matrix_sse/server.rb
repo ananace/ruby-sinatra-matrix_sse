@@ -76,6 +76,7 @@ module MatrixSse
 
         return unless @background_running
 
+        # TODO: Avoid iterating all connections for every result
         @connections.each do |conn|
           query = conn.query
           next if query.incomplete?
