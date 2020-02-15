@@ -51,7 +51,7 @@ get '/_matrix/client/r0/sync/sse', provides: 'text/event-stream' do
     conn = MatrixSse::Connection.new(
       stream: out,
       access_token: access_token,
-      event: sse_server.event,
+      concurrent_event: sse_server.event,
 
       heartbeat_interval: heartbeat,
       since: last_event_id,

@@ -8,10 +8,10 @@ module MatrixSse
                   :last_heartbeat, :logger, :name, :set_presence, :since
     attr_reader :access_token, :stream
 
-    def initialize(stream:, access_token:, event:, **params)
+    def initialize(stream:, access_token:, concurrent_event:, **params)
       @stream = stream
       @access_token = access_token
-      @event = event
+      @event = concurrent_event
 
       @write_lock = Mutex.new
       @clean_events = false
