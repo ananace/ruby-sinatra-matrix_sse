@@ -17,6 +17,11 @@ module MatrixSse
       @event = Concurrent::Event.new
     end
 
+    # TODO: Avoid the necessity of this
+    def ensure_logger(logger)
+      @logger ||= logger
+    end
+
     def add_connection(conn)
       conn.api = MatrixSdk::Api.new(
         @main_api.homeserver,

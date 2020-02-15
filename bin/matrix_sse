@@ -15,18 +15,19 @@ sse_server.default_heartbeat = config['default_heartbeat'] if config.key? 'defau
 set server: 'thin', connections: []
 
 get '/' do
-  sse_server.logger ||= logger
+  sse_server.ensure_logger logger
 end
 
 options '/_matrix/client/r0/sync/sse', provides: :json do
-  sse_server.logger ||= logger
+  sse_server.ensure_logger logger
 
   {}.to_json
 end
 
 get '/_matrix/client/r0/sync/sse', provides: 'text/event-stream' do
   pass unless request.accept? 'text/event-stream'
-  sse_server.logger ||= logger
+
+  sse_server.ensure_logger logger
 
   logger.info "Received SSE request, params: #{params}"
 
