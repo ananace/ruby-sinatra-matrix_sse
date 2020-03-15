@@ -78,31 +78,34 @@ module MatrixSse
 
         # TODO: Avoid iterating all connections for every result
         @connections.each do |conn|
-          query = conn.query
-          next if query.incomplete?
+          begin
+            query = conn.query
+            next if query.incomplete?
 
-          if query.rejected?
-            err = query.reason
+            if query.rejected?
+              err = query.reason
 
-            conn.send_event name: :sync_error, data: {
-              type: err.class,
-              message: err.message,
-              trace: err.backtrace
-            }.to_json
-          else
-            data = query.value
+              conn.send_event name: :sync_error, data: {
+                type: err.class,
+                message: err.message,
+                trace: err.backtrace
+              }.to_json
+            else
+              data = query.value
 
-            id = data.next_batch
-            data.delete :next_batch
-            conn.since = id
+              id = data.next_batch
+              data.delete :next_batch
+              conn.since = id
 
-            conn.send_data data, id: id
+              conn.send_data data, id: id
+            end
+
+            conn.reset_query
+            conn.query
+          rescue StandardError => e
+            logger.error "#{e.class} occurred for connection #{conn.name}, skipping;\n#{e.full_message}" # rubocop:disable Layout/LineLength
           end
-
-          conn.reset_query
-          conn.query
         end
-
       end
     end
   end
