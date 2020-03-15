@@ -84,7 +84,11 @@ module MatrixSse
           if query.rejected?
             err = query.reason
 
-            conn.send_event name: :sync_error, data: err
+            conn.send_event name: :sync_error, data: {
+              type: err.class,
+              message: err.message,
+              trace: err.backtrace
+            }.to_json
           else
             data = query.value
 
