@@ -13,12 +13,12 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/ananace/ruby-sinatra-matrix_sse'
   spec.license       = 'MIT'
 
-  spec.files         = Dir['{bin/lib}/**']
-  spec.bindir        = 'bin'
-  spec.executables   = %w[matrix_sse]
+  spec.extra_rdoc_files = %w[LICENSE.txt README.md]
+  spec.files            = Dir['lib/**'] + spec.extra_rdoc_files
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'sinatra-contrib'
 
   spec.add_dependency 'concurrent-ruby'
   spec.add_dependency 'matrix_sdk'

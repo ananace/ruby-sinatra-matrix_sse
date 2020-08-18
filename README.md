@@ -5,7 +5,7 @@ A small testbed server for trying out [MSC2108][1] for the [Matrix protocol][2]
 
 ## Installation
 
-Check out this repo, install the bundle, instantiate the config, and run `matrix_sse` to launch the server.
+Check out this repo, install the bundle, instantiate the config, and run `rackup` to launch the server.
 Also available on [DockerHub][4] as `ananace/matrix_sse`.
 
 An example configuration is provided as;
