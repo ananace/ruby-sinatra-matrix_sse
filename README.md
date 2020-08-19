@@ -25,7 +25,7 @@ launch an SSE stream, taking the same parameters as the upstream
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/ananace/matrix_sse
+Bug reports and pull requests are welcome on GitHub at https://github.com/ananace/ruby-sinatra-matrix_sse
 
 ## License
 
