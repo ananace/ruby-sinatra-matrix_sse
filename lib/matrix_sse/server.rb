@@ -6,7 +6,7 @@ require 'matrix_sdk'
 module MatrixSse
   class Server
     attr_accessor :logger, :default_heartbeat
-    attr_reader :event
+    attr_reader :event, :main_api
 
     def initialize(hs_url, logger: nil)
       @main_api = MatrixSdk::Api.new hs_url

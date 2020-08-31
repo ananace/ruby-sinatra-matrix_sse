@@ -8,7 +8,7 @@ require 'matrix_sse'
 config = JSON.parse(File.read('config.json'))
 
 map '/health' do
-  run lambda { |_env| [ '200', { 'Content-Type' => 'text/plain' }, ['OK'] ] }
+  run -> { ['200', { 'Content-Type' => 'text/plain' }, ['OK']] }
 end
 
 run MatrixSse::Application.new config

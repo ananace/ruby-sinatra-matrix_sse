@@ -16,6 +16,8 @@ module MatrixSse
       sse_server.start_background_worker
       sse_server.default_heartbeat = config['default_heartbeat'] if config.key? 'default_heartbeat'
       sse_server.ensure_logger Logging.logger[self]
+
+      verify_hs!
     end
 
     configure :development do
@@ -46,29 +48,32 @@ module MatrixSse
       end
 
       params = request.params
-      last_event_id = request.get_header('HTTP_LAST_EVENT_ID')
-      access_token = request.get_header('HTTP_AUTHORIZATION').gsub('Bearer ', '')
-      heartbeat = params.fetch('heartbeat_interval', sse_server.default_heartbeat).to_i
-      filter = params['filter']
-      set_presence = params['set_presence']
-      full_state = params['full_state']
 
       stream :keep_open do |out|
         conn = MatrixSse::Connection.new(
           stream: out,
-          access_token: access_token,
+          access_token: request.get_header('HTTP_AUTHORIZATION').gsub('Bearer ', ''),
           concurrent_event: sse_server.event,
 
-          heartbeat_interval: heartbeat,
-          since: last_event_id,
-          filter: filter,
-          set_presence: set_presence,
-          full_state: full_state,
+          heartbeat_interval: params.fetch('heartbeat_interval', sse_server.default_heartbeat).to_i,
+          since: request.get_header('HTTP_LAST_EVENT_ID'),
+          filter: params['filter'],
+          set_presence: params['set_presence'],
+          full_state: params['full_state']
         )
 
         sse_server.add_connection conn
         out.callback { sse_server.remove_connection(conn) }
       end
+    end
+
+    private
+
+    def verify_hs!
+      v = sse_server.main_api.client_api_versions
+      raise 'Unable to verify HS connection, check if the configured HS is alive' if v.nil? || v.empty?
+    rescue StandardError
+      raise 'Unable to verify HS connection, check URL'
     end
   end
 end
