@@ -97,7 +97,7 @@ module MatrixSse
               data.delete :next_batch
               conn.since = id
 
-              conn.send_data data, id: id
+              conn.send_data data, id: id if conn.wants? data
             end
 
             conn.reset_query

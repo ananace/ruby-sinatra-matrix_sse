@@ -81,7 +81,19 @@ module MatrixSse
       @query = nil
     end
 
-    private 
+    # Check for empty sync responses (ones that reached timeout)
+    def wants?(sync)
+      return true if sync.key? 'rooms'
+      return true if sync.key? 'presence'
+      return true if sync.key? 'to_device'
+      return true if sync.key? 'account_data'
+      return true if sync.key? 'device_lists'
+      return true if sync.key?('device_one_time_keys_count') && sync['device_one_time_keys_count'].any?
+
+      false
+    end
+
+    private
 
     def clean_sync(data)
       # Remove empty main-level keys
