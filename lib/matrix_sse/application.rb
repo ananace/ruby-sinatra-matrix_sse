@@ -30,6 +30,16 @@ module MatrixSse
       end
     end
 
+    options '/_matrix/client/versions', provides: :json do
+      {}.to_json
+    end
+
+    get '/_matrix/client/versions', provides: :json do
+      versions = sse_server.main_api.request(:get, :client, '/versions')
+      versions[:unstable_features][:"org.matrix.msc2108"] = true
+      versions.to_json
+    end
+
     options '/_matrix/client/r0/sync/sse', provides: :json do
       {}.to_json
     end
